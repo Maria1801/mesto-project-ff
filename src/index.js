@@ -1,7 +1,7 @@
 import './styles/index.css';
 import { initialCards } from './cards.js';
 import { fnOpenModal, fnCloseModal } from './components/modal.js';
-import { deleteCard, createElement, createCard, fnLikeButton } from './components/card.js';
+import { deleteCard, createElement, fnLikeButton } from './components/card.js';
 
 const placesList = document.querySelector('.places__list');
 
@@ -11,6 +11,10 @@ const popupEdit = document.querySelector(".popup_type_edit");
 const popupNewCard = document.querySelector(".popup_type_new-card");
 const popupsClose = document.querySelectorAll(".popup__close");
 const popupImage = document.querySelector(".popup_type_image");
+const popupName = document.querySelector('.popup__input_type_name');
+const popupDescription = document.querySelector('.popup__input_type_description');
+const name = document.querySelector('.popup__input_type_card-name');
+const link = document.querySelector('.popup__input_type_url');
 
 editButton.addEventListener("click", () => {
     fnOpenModal(popupEdit);
@@ -51,9 +55,25 @@ initialCards.forEach(cardInfo => {
     placesList.append(createElement(cardInfo.name, cardInfo.link, deleteCard, fnLikeButton));
 })
 
+function createCard() {
+    const popupNewCard = document.querySelector(".popup_type_new-card");
+    const placesList = document.querySelector('.places__list');
+
+    const newCard = {
+        name: name.value,
+        link: link.value
+    }
+    initialCards.unshift(newCard)
+
+    fnCloseModal(popupNewCard);
+
+    document.querySelectorAll(".card").forEach(card => card.remove())
+    initialCards.forEach(cardInfo => {
+        placesList.append(createElement(cardInfo.name, cardInfo.link, deleteCard, fnLikeButton,));
+    })
+}
+
 function createInfo() {
-    const popupName = document.querySelector('.popup__input_type_name');
-    const popupDescription = document.querySelector('.popup__input_type_description');
     const profileTitle = document.querySelector('.profile__title');
     const profileDescription = document.querySelector('.profile__description');
 
@@ -63,12 +83,9 @@ function createInfo() {
 
 const formElement = document.forms['edit-profile']
 
-const nameInput = document.querySelector('.popup__input_type_name');
-const jobInput = document.querySelector('.popup__input_type_description');
-
 function handleFormSubmit(evt) {
-    const nameValue = nameInput.value;
-    const jobValue = jobInput.value;
+    const nameValue = popupName.value;
+    const jobValue = popupDescription.value;
 
     const profileDescription = document.querySelector('.profile__description');
     const profileTitle = document.querySelector('.profile__title');
@@ -83,3 +100,4 @@ formElement.addEventListener('submit', handleFormSubmit);
 
 const formCreateCard = document.forms['new-place']
 formCreateCard.addEventListener('submit', createCard);
+

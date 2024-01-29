@@ -1,7 +1,7 @@
 import { fnCloseModal, addCardModal } from './modal.js'
 import { initialCards } from '../cards.js';
 
-function createElement(name, link, deleteCard, fnLikeButton) {
+function createElement(name, link, deleteCard, fnLikeButton, addCardModal) {
     const cardTemplate = document.querySelector('#card-template');
     const cardElement = cardTemplate.content.cloneNode(true);
 
@@ -30,24 +30,4 @@ function fnLikeButton(event) {
     cardToLike.classList.toggle("card__like-button_is-active")
 }
 
-function createCard() {
-    const name = document.querySelector('.popup__input_type_card-name');
-    const link = document.querySelector('.popup__input_type_url');
-    const popupNewCard = document.querySelector(".popup_type_new-card");
-    const placesList = document.querySelector('.places__list');
-
-    const newCard = {
-        name: name.value,
-        link: link.value
-    }
-    initialCards.unshift(newCard)
-
-    fnCloseModal(popupNewCard);
-
-    document.querySelectorAll(".card").forEach(card => card.remove())
-    initialCards.forEach(cardInfo => {
-        placesList.append(createElement(cardInfo.name, cardInfo.link, deleteCard, fnLikeButton));
-    })
-}
-
-export { deleteCard, createElement, createCard, fnLikeButton }
+export { deleteCard, createElement, fnLikeButton }
