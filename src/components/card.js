@@ -1,6 +1,3 @@
-import { fnCloseModal, addCardModal } from './modal.js'
-import { initialCards } from '../cards.js';
-
 function createElement(name, link, deleteCard, fnLikeButton, addCardModal) {
     const cardTemplate = document.querySelector('#card-template');
     const cardElement = cardTemplate.content.cloneNode(true);

@@ -1,6 +1,6 @@
 import './styles/index.css';
 import { initialCards } from './cards.js';
-import { fnOpenModal, fnCloseModal } from './components/modal.js';
+import { fnOpenModal, fnCloseModal, addCardModal } from './components/modal.js';
 import { deleteCard, createElement, fnLikeButton } from './components/card.js';
 
 const placesList = document.querySelector('.places__list');
@@ -43,16 +43,12 @@ document.addEventListener("click", (event) => {
     }
 });
 
-document.addEventListener('keydown', (event) => {
-    if (event.key == "Escape") {
-        fnCloseModal(popupEdit)
-        fnCloseModal(popupNewCard)
-        fnCloseModal(popupImage)
-    }
-});
+
+
+
 
 initialCards.forEach(cardInfo => {
-    placesList.append(createElement(cardInfo.name, cardInfo.link, deleteCard, fnLikeButton));
+    placesList.append(createElement(cardInfo.name, cardInfo.link, deleteCard, fnLikeButton, addCardModal));
 })
 
 function createCard() {
@@ -63,15 +59,21 @@ function createCard() {
         name: name.value,
         link: link.value
     }
+
     initialCards.unshift(newCard)
 
     fnCloseModal(popupNewCard);
 
     document.querySelectorAll(".card").forEach(card => card.remove())
     initialCards.forEach(cardInfo => {
-        placesList.append(createElement(cardInfo.name, cardInfo.link, deleteCard, fnLikeButton,));
+        placesList.append(createElement(cardInfo.name, cardInfo.link, deleteCard, fnLikeButton, addCardModal));
     })
 }
+
+
+
+
+
 
 function createInfo() {
     const profileTitle = document.querySelector('.profile__title');
