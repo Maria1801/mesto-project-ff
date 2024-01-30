@@ -60,12 +60,11 @@ initialCards.forEach(cardInfo => {
     placesList.append(createElement(cardInfo.name, cardInfo.link, deleteCard, fnLikeButton, addCardModal));
 })
 
-function createCard() {
-    const popupNewCard = document.querySelector(".popup_type_new-card");
-    const placesList = document.querySelector('.places__list');
-
+function createCard(evt) {
     placesList.prepend(createElement(popupCardName.value, popupUrl.value, deleteCard, fnLikeButton, addCardModal))
     closePopup(popupNewCard);
+
+    evt.target.reset()
 }
 
 function createInfo() {
