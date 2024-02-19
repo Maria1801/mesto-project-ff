@@ -130,8 +130,8 @@
         </div>
       </li>
     </template>
-    <div class="popup popup_type_change-avatar">
-      <div class="popup__content popup__content_type-avatar">
+    <div class="popup popup__avatar">
+      <div class="popup__content">
         <button
           type="button"
           class="popup__close"
@@ -140,13 +140,14 @@
         <form
           class="popup__form popup__form_changeAvatar"
           name="avatar"
+          onsubmit="return false"
           novalidate
         >
           <label class="popup__field">
             <input
               type="url"
               name="URL"
-              class="popup__input"
+              class="popup__input popup__input-avatar"
               required
             />
             <span class="popup__input-error URL-input-error"></span>

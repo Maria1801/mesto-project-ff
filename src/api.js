@@ -80,11 +80,12 @@ function unlikeCard(cardId) {
     }).then(res => handleResponse(res))
 }
 
-function avatarServer(linkAvatar) {
+function avatarEdit(linkAvatar) {
     return fetch('https://nomoreparties.co/v1/wff-cohort-7/users/me/avatar', {
-        method: 'PATCH ',
+        method: 'PATCH',
         headers: {
-            authorization: 'c5139b1d-af8c-4edd-a1ef-591582a9e812'
+            authorization: 'c5139b1d-af8c-4edd-a1ef-591582a9e812',
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
             avatar: linkAvatar
@@ -94,4 +95,4 @@ function avatarServer(linkAvatar) {
 }
 
 
-export { getCards, getUser, editUser, addCard, deleteCard, likeCard, unlikeCard }
+export { getCards, getUser, editUser, addCard, deleteCard, likeCard, unlikeCard, avatarEdit }
