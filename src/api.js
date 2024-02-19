@@ -1,35 +1,38 @@
+const config = {
+    baseUrl: 'https://nomoreparties.co/v1/wff-cohort-7',
+    headers: {
+      authorization: 'c5139b1d-af8c-4edd-a1ef-591582a9e812',
+      'Content-Type': 'application/json'
+    }
+  }
+
 function handleResponse(res) {   
     if (res.ok) {
       return res.json();
     }  
-    return Promise.reject(res.status)    
+    return Promise.reject(`Ошибка: ${res.status}`)    
   };
 
 function getFromServer(url) {
     return fetch(url, {
         method: 'GET',
-        headers: {
-            authorization: 'c5139b1d-af8c-4edd-a1ef-591582a9e812'
-        }
+        headers: config.headers
     })
         .then(res => handleResponse(res))
 }
 
 function getCards() {
-    return getFromServer('https://nomoreparties.co/v1/wff-cohort-7/cards');
+    return getFromServer(config.baseUrl + '/cards');
 }
 
 function getUser() {
-    return getFromServer('https://nomoreparties.co/v1/wff-cohort-7/users/me');
+    return getFromServer(config.baseUrl + '/users/me');
 }
 
 function editUser(nameInput, aboutInput) {
-    return fetch('https://nomoreparties.co/v1/wff-cohort-7/users/me', {
+    return fetch(config.baseUrl + '/users/me', {
         method: 'PATCH',
-        headers: {
-            authorization: 'c5139b1d-af8c-4edd-a1ef-591582a9e812',
-            'Content-Type': 'application/json'
-        },
+        headers: config.headers,
         body: JSON.stringify({
             name: nameInput,
             about: aboutInput
@@ -39,12 +42,9 @@ function editUser(nameInput, aboutInput) {
 }
 
 function addCard(nameInput, linkInput) {
-    return fetch('https://nomoreparties.co/v1/wff-cohort-7/cards', {
+    return fetch(config.baseUrl + '/cards', {
         method: 'POST',
-        headers: {
-            authorization: 'c5139b1d-af8c-4edd-a1ef-591582a9e812',
-            'Content-Type': 'application/json'
-        },
+        headers: config.headers,
         body: JSON.stringify({
             name: nameInput,
             link: linkInput
@@ -54,39 +54,30 @@ function addCard(nameInput, linkInput) {
 }
 
 function deleteCard(cardId) {
-    return fetch('https://nomoreparties.co/v1/wff-cohort-7/cards/' + cardId, {
+    return fetch(config.baseUrl + '/cards/' + cardId, {
         method: 'DELETE',
-        headers: {
-            authorization: 'c5139b1d-af8c-4edd-a1ef-591582a9e812'
-        }
+        headers: config.headers
     }).then(res => handleResponse(res))
 }
 
 function likeCard(cardId) {
-    return fetch('https://nomoreparties.co/v1/wff-cohort-7/cards/likes/' + cardId, {
+    return fetch(config.baseUrl + '/cards/likes/' + cardId, {
         method: 'PUT',
-        headers: {
-            authorization: 'c5139b1d-af8c-4edd-a1ef-591582a9e812'
-        }
+        headers: config.headers
     }).then(res => handleResponse(res))
 }
 
 function unlikeCard(cardId) {
-    return fetch('https://nomoreparties.co/v1/wff-cohort-7/cards/likes/' + cardId, {
+    return fetch(config.baseUrl + '/cards/likes/' + cardId, {
         method: 'DELETE',
-        headers: {
-            authorization: 'c5139b1d-af8c-4edd-a1ef-591582a9e812'
-        }
+        headers: config.headers
     }).then(res => handleResponse(res))
 }
 
 function avatarEdit(linkAvatar) {
-    return fetch('https://nomoreparties.co/v1/wff-cohort-7/users/me/avatar', {
+    return fetch(config.baseUrl + '/users/me/avatar', {
         method: 'PATCH',
-        headers: {
-            authorization: 'c5139b1d-af8c-4edd-a1ef-591582a9e812',
-            'Content-Type': 'application/json'
-        },
+        headers: config.headers,
         body: JSON.stringify({
             avatar: linkAvatar
         })

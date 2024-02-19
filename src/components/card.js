@@ -18,15 +18,11 @@ function createElement(name, link, likeCount, isAuthor, isLikedMe, user, cardId,
         const isLikedMeNow = cardToLike.classList.contains("card__like-button_is-active");
         if (isLikedMeNow) {
             fnUnlikeButtonApi(cardId).then((res) => {
-                console.log('fnUnlikeButtonApi')
-                console.log(res)
                 const isLikedMe = res.likes.some(u => u._id === user._id)
                 fnLikeButton(cardToLike, likeCounter, isLikedMe, res.likes.length)
             })
         } else {
             fnLikeButtonApi(cardId).then((res) => {
-                console.log('fnLikeButtonApi')
-                console.log(res)
                 const isLikedMe = res.likes.some(u => u._id === user._id)
                 fnLikeButton(cardToLike, likeCounter, isLikedMe, res.likes.length)
             })

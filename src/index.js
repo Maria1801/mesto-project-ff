@@ -20,11 +20,7 @@ const popupUrl = document.querySelector('.popup__input_type_url');
 const popupImageImg = document.querySelector(".popup__image");
 const popupCaption = document.querySelector(".popup__caption");
 const profileImage = document.querySelector('.profile__image');
-const avatarButton = document.querySelector(".profile__image"); 
-const popupAvatarClose = document.querySelector('.popup__close');
-const popupTypeAvatar = document.querySelector(".popup__avatar");
-const avatarInput = document.querySelector(".popup__input-avatar"); 
-const profileImageAvatar =  document.querySelector(".profile__image"); 
+const popupAvatar = document.querySelector('.popup__avatar');
 const formElement = document.forms['edit-profile']
 const formCreateCard = document.forms['new-place']
 const formAvatar = document.forms['avatar']
@@ -54,7 +50,7 @@ popupsClose.forEach(popup =>
         closePopup(popupEdit);
         closePopup(popupNewCard);
         closePopup(popupImage);
-        closePopup(popupTypeAvatar);
+        closePopup(popupAvatar);
     })
 )
 
@@ -62,11 +58,11 @@ document.addEventListener("click", (event) => {
     if (event.target == popupEdit ||
         event.target == popupNewCard ||
         event.target == popupImage ||
-        event.target == popupAvatarClose) {
+        event.target == popupAvatar) {
         closePopup(popupEdit)
         closePopup(popupNewCard)
         closePopup(popupImage)
-        closePopup(popupTypeAvatar);
+        closePopup(popupAvatar);
     }
 });
 
@@ -81,14 +77,18 @@ function addCardModal(event) {
 }
 
 function createCard(evt) {
+    const sumbitButton = formCreateCard.querySelector(validationConfig.submitButtonSelector);
+    sumbitButton.innerText = 'Сохранение...';
     addCard(popupCardName.value, popupUrl.value)
         .then(res => {
-            console.log(res)
             placesList.prepend(createElement(popupCardName.value, popupUrl.value, 0, true, false, res.owner, res._id, deleteCard, deleteCardApi, fnLikeButton, likeCard, unlikeCard, addCardModal))
             closePopup(popupNewCard);
             evt.target.reset();
-        }
-        )
+            sumbitButton.innerText = 'Сохранить';
+        })
+        .catch((err) => {
+            console.log(err);
+        });
 }
 
 function createInfo() {
@@ -100,20 +100,35 @@ function createInfo() {
 function handleFormSubmit(evt) {
     const nameValue = popupName.value;
     const jobValue = popupDescription.value;
+    const sumbitButton = formElement.querySelector(validationConfig.submitButtonSelector);
+    sumbitButton.innerText = 'Сохранение...';
 
-    closePopup(popupEdit);
     editUser(nameValue, jobValue).then(() => {
         profileTitle.textContent = nameValue;
         profileDescription.textContent = jobValue;
-    });
+        closePopup(popupEdit);
+        sumbitButton.innerText = 'Сохранить';
+    })
+        .catch((err) => {
+            console.log(err);
+        });
 }
 
-function editAvatar(){
+function editAvatar() {
+    const sumbitButton = formAvatar.querySelector(validationConfig.submitButtonSelector);
+    const avatarInput = formAvatar.querySelector(validationConfig.inputSelector);
+
     const link = avatarInput.value;
-    closePopup(popupTypeAvatar);
-    avatarEdit(link).then((res) => {
-        profileImageAvatar.style.backgroundImage = 'url(' + link + ')'
-    })
+    sumbitButton.innerText = 'Сохранение...';
+    avatarEdit(link)
+        .then((res) => {
+            profileImage.style.backgroundImage = 'url(' + link + ')';
+            closePopup(popupAvatar);
+            sumbitButton.innerText = 'Сохранить';
+        })
+        .catch((err) => {
+            console.log(err);
+        });
 }
 
 formElement.addEventListener('submit', handleFormSubmit);
@@ -137,14 +152,22 @@ Promise.all([getCards(), getUser()])
         profileTitle.textContent = user.name;
         profileDescription.textContent = user.about;
         profileImage.backgraundImage = user.avatar;
-        profileImageAvatar.style.backgroundImage = 'url(' + user.avatar + ')'
+        profileImage.style.backgroundImage = 'url(' + user.avatar + ')'
     }
     )
-
-    
-    avatarButton.addEventListener("click", () => {
-        console.log(popupTypeAvatar)
-        openPopup(popupTypeAvatar);
-        clearValidation(formAvatar, validationConfig);
+    .catch((err) => {
+        console.log(err);
     });
-  
+
+
+profileImage.addEventListener("click", () => {
+    openPopup(popupAvatar);
+    clearValidation(formAvatar, validationConfig);
+    const sumbitButton = formAvatar.querySelector(validationConfig.submitButtonSelector);
+    const avatarInput = formAvatar.querySelector(validationConfig.inputSelector);
+    
+    avatarInput.value = '';
+    sumbitButton.disabled = true;
+    sumbitButton.classList.add(validationConfig.inactiveButtonClass);
+});
+
