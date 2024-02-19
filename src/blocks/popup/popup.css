@@ -23,3 +23,14 @@
   opacity: 0;
   visibility: hidden;
 }
+
+.popup__content {
+  background-color: #fff;
+  border-radius: 10px;
+  box-sizing: border-box;
+  max-width: 430px;
+  min-height: 330px;
+  padding: 34px 36px;
+  position: relative;
+  width: 100%;
+}

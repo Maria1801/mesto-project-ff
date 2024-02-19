@@ -1,7 +1,8 @@
 import './styles/index.css';
-import { initialCards } from './cards.js';
 import { openPopup, closePopup } from './components/modal.js';
 import { deleteCard, createElement, fnLikeButton } from './components/card.js';
+import { enableValidation, clearValidation } from './validation.js';
+import { getCards, getUser, editUser, addCard, deleteCard as deleteCardApi, likeCard, unlikeCard } from './api.js';
 
 const placesList = document.querySelector('.places__list');
 const editButton = document.querySelector(".profile__edit-button");
@@ -18,14 +19,32 @@ const popupCardName = document.querySelector('.popup__input_type_card-name');
 const popupUrl = document.querySelector('.popup__input_type_url');
 const popupImageImg = document.querySelector(".popup__image");
 const popupCaption = document.querySelector(".popup__caption");
+const profileImage = document.querySelector('.profile__image');
+const avatarButton = document.querySelector(".profile__image"); 
+const popupTypeAvatar = document.querySelector(".popup_type_change-avatar");
+// const popupAvatar = document.querlySelector('.popup__content_type-avatar');
+const formElement = document.forms['edit-profile']
+const formCreateCard = document.forms['new-place']
+const formAvatar = document.forms['avatar']
+
+const validationConfig = {
+    formSelector: '.popup__form',
+    inputSelector: '.popup__input',
+    submitButtonSelector: '.popup__button',
+    inactiveButtonClass: 'popup__button_disabled',
+    inputErrorClass: 'popup__input_type_error',
+    errorClass: 'popup__error_visible'
+}
 
 editButton.addEventListener("click", () => {
     openPopup(popupEdit);
     createInfo();
+    clearValidation(formElement, validationConfig);
 });
 
 addButton.addEventListener("click", () => {
     openPopup(popupNewCard);
+    clearValidation(formCreateCard, validationConfig);
 });
 
 popupsClose.forEach(popup =>
@@ -42,7 +61,7 @@ document.addEventListener("click", (event) => {
         event.target == popupImage) {
         closePopup(popupEdit)
         closePopup(popupNewCard)
-        closePopup(popupImage)
+        closePopup(popupImage);
     }
 });
 
@@ -56,15 +75,15 @@ function addCardModal(event) {
     openPopup(popupImage);
 }
 
-initialCards.forEach(cardInfo => {
-    placesList.append(createElement(cardInfo.name, cardInfo.link, deleteCard, fnLikeButton, addCardModal));
-})
-
 function createCard(evt) {
-    placesList.prepend(createElement(popupCardName.value, popupUrl.value, deleteCard, fnLikeButton, addCardModal))
-    closePopup(popupNewCard);
-
-    evt.target.reset()
+    addCard(popupCardName.value, popupUrl.value)
+        .then(res => {
+            console.log(res)
+            placesList.prepend(createElement(popupCardName.value, popupUrl.value, 0, true, false, res.owner, res._id, deleteCard, deleteCardApi, fnLikeButton, likeCard, unlikeCard, addCardModal))
+            closePopup(popupNewCard);
+            evt.target.reset();
+        }
+        )
 }
 
 function createInfo() {
@@ -72,7 +91,6 @@ function createInfo() {
     popupDescription.value = profileDescription.innerText;
 }
 
-const formElement = document.forms['edit-profile']
 
 function handleFormSubmit(evt) {
     const nameValue = popupName.value;
@@ -82,9 +100,34 @@ function handleFormSubmit(evt) {
     profileDescription.textContent = jobValue;
 
     closePopup(popupEdit);
+    editUser(nameValue, jobValue);
 }
 
 formElement.addEventListener('submit', handleFormSubmit);
 
-const formCreateCard = document.forms['new-place']
 formCreateCard.addEventListener('submit', createCard);
+
+enableValidation(validationConfig);
+
+Promise.all([getCards(), getUser()])
+    .then(([initialCards, user]) => {
+        console.log(initialCards)
+        initialCards.forEach(cardInfo => {
+            const author = cardInfo.owner.name;
+            const isAuthor = author === user.name;
+            const isLiked = cardInfo.likes.some(u => u._id === user._id)
+            placesList.append(createElement(cardInfo.name, cardInfo.link, cardInfo.likes.length, isAuthor, isLiked, user, cardInfo._id, deleteCard, deleteCardApi, fnLikeButton, likeCard, unlikeCard, addCardModal));
+        })
+        profileTitle.textContent = user.name;
+        profileDescription.textContent = user.about;
+        profileImage.backgraundImage = user.avatar;
+    }
+    )
+
+    
+    avatarButton.addEventListener("click", () => {
+        console.log(popupTypeAvatar)
+        openPopup(popupTypeAvatar);
+        clearValidation(formAvatar, validationConfig);
+    });
+  

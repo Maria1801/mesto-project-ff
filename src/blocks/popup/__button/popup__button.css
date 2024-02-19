@@ -25,3 +25,15 @@
     line-height: 17px;
   }
 }
+
+.popup__button_disabled { 
+  color: #C4C4C4;
+  font-family: Inter;
+  background: #FFF;;
+  border: 1px solid #C4C4C4;;
+  pointer-events: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+ }
