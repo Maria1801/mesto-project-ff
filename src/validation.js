@@ -13,6 +13,7 @@ const isValid = (formElement, inputElement, validationConfig) => {
 
 const showInputError = (formElement, inputElement, errorMessage, validationConfig) => {
     const spanElement = formElement.querySelector(`.${inputElement.name}-input-error`);
+    inputElement.style.borderBottom = '1px solid red';
 
     spanElement.textContent = errorMessage;
     spanElement.classList.add(validationConfig.errorClass);
@@ -20,8 +21,8 @@ const showInputError = (formElement, inputElement, errorMessage, validationConfi
 
 const hideInputError = (formElement, inputElement, validationConfig) => {
     const spanElement = formElement.querySelector(`.${inputElement.name}-input-error`);
-
-    spanElement.textContent = '';
+    inputElement.style.borderBottom = '1px solid red';
+    inputElement.style.borderBottom = '1px solid rgba(0, 0, 0, 0.2)';
     spanElement.classList.remove(validationConfig.errorClass);
 };
 

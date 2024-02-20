@@ -96,7 +96,6 @@ function createInfo() {
     popupDescription.value = profileDescription.innerText;
 }
 
-
 function handleFormSubmit(evt) {
     const nameValue = popupName.value;
     const jobValue = popupDescription.value;
@@ -159,13 +158,12 @@ Promise.all([getCards(), getUser()])
         console.log(err);
     });
 
-
 profileImage.addEventListener("click", () => {
     openPopup(popupAvatar);
     clearValidation(formAvatar, validationConfig);
     const sumbitButton = formAvatar.querySelector(validationConfig.submitButtonSelector);
     const avatarInput = formAvatar.querySelector(validationConfig.inputSelector);
-    
+
     avatarInput.value = '';
     sumbitButton.disabled = true;
     sumbitButton.classList.add(validationConfig.inactiveButtonClass);

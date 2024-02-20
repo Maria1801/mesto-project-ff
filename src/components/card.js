@@ -46,7 +46,7 @@ function deleteCard(event) {
 }
 
 function fnLikeButton(cardToLike, likeCounter, isLikedMe, count) {
-    if(isLikedMe) {
+    if (isLikedMe) {
         cardToLike.classList.add("card__like-button_is-active");
     } else {
         cardToLike.classList.remove("card__like-button_is-active");

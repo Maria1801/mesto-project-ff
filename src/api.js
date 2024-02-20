@@ -1,17 +1,17 @@
 const config = {
     baseUrl: 'https://nomoreparties.co/v1/wff-cohort-7',
     headers: {
-      authorization: 'c5139b1d-af8c-4edd-a1ef-591582a9e812',
-      'Content-Type': 'application/json'
+        authorization: 'c5139b1d-af8c-4edd-a1ef-591582a9e812',
+        'Content-Type': 'application/json'
     }
-  }
+}
 
-function handleResponse(res) {   
+function handleResponse(res) {
     if (res.ok) {
-      return res.json();
-    }  
-    return Promise.reject(`Ошибка: ${res.status}`)    
-  };
+        return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`)
+};
 
 function getFromServer(url) {
     return fetch(url, {
@@ -38,7 +38,7 @@ function editUser(nameInput, aboutInput) {
             about: aboutInput
         })
     })
-    .then(res => handleResponse(res))
+        .then(res => handleResponse(res))
 }
 
 function addCard(nameInput, linkInput) {
@@ -50,7 +50,7 @@ function addCard(nameInput, linkInput) {
             link: linkInput
         })
     })
-    .then(res => handleResponse(res))
+        .then(res => handleResponse(res))
 }
 
 function deleteCard(cardId) {
@@ -82,7 +82,7 @@ function avatarEdit(linkAvatar) {
             avatar: linkAvatar
         })
     })
-    .then(res => handleResponse(res))
+        .then(res => handleResponse(res))
 }
 
 
