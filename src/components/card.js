@@ -1,4 +1,11 @@
-function createElement(name, link, likeCount, isAuthor, isLikedMe, user, cardId, deleteCard, deleteCardApi, fnLikeButton, fnLikeButtonApi, fnUnlikeButtonApi, addCardModal) {
+function createElement(cardInfo, myId, isLikedMe, deleteCardCallback, likeCardCallback, addCardModal) {
+    const name = cardInfo.name;
+    const link = cardInfo.link;
+    const likeCount = cardInfo.likes.length;
+    const user = cardInfo.owner;
+    const cardId = cardInfo._id;
+    const isAuthor = cardInfo.owner._id === myId;
+
     const cardTemplate = document.querySelector('#card-template');
     const cardElement = cardTemplate.content.cloneNode(true);
 
@@ -16,25 +23,13 @@ function createElement(name, link, likeCount, isAuthor, isLikedMe, user, cardId,
     cardImage.addEventListener("click", addCardModal)
     cardToLike.addEventListener("click", () => {
         const isLikedMeNow = cardToLike.classList.contains("card__like-button_is-active");
-        if (isLikedMeNow) {
-            fnUnlikeButtonApi(cardId).then((res) => {
-                const isLikedMe = res.likes.some(u => u._id === user._id)
-                fnLikeButton(cardToLike, likeCounter, isLikedMe, res.likes.length)
-            })
-        } else {
-            fnLikeButtonApi(cardId).then((res) => {
-                const isLikedMe = res.likes.some(u => u._id === user._id)
-                fnLikeButton(cardToLike, likeCounter, isLikedMe, res.likes.length)
-            })
-        }
+        likeCardCallback(cardId, cardToLike, likeCounter, isLikedMeNow, myId)
     });
 
     if (!isAuthor) {
         removeButton.style.display = 'none';
     } else {
-        removeButton.addEventListener("click", (event) => {
-            deleteCardApi(cardId).then(deleteCard(event))
-        });
+        removeButton.addEventListener("click", (event) => deleteCardCallback(event, cardId));
     }
 
     return cardElement;

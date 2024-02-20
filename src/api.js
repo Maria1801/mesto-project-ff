@@ -19,6 +19,7 @@ function getFromServer(url) {
         headers: config.headers
     })
         .then(res => handleResponse(res))
+        .catch((err) => console.log(err))
 }
 
 function getCards() {
@@ -39,6 +40,8 @@ function editUser(nameInput, aboutInput) {
         })
     })
         .then(res => handleResponse(res))
+        .catch((err) => console.log(err))
+
 }
 
 function addCard(nameInput, linkInput) {
@@ -51,6 +54,8 @@ function addCard(nameInput, linkInput) {
         })
     })
         .then(res => handleResponse(res))
+        .catch((err) => console.log(err))
+
 }
 
 function deleteCard(cardId) {
@@ -58,6 +63,8 @@ function deleteCard(cardId) {
         method: 'DELETE',
         headers: config.headers
     }).then(res => handleResponse(res))
+        .catch((err) => console.log(err))
+
 }
 
 function likeCard(cardId) {
@@ -65,6 +72,8 @@ function likeCard(cardId) {
         method: 'PUT',
         headers: config.headers
     }).then(res => handleResponse(res))
+        .catch((err) => console.log(err))
+
 }
 
 function unlikeCard(cardId) {
@@ -72,6 +81,8 @@ function unlikeCard(cardId) {
         method: 'DELETE',
         headers: config.headers
     }).then(res => handleResponse(res))
+        .catch((err) => console.log(err))
+
 }
 
 function avatarEdit(linkAvatar) {
@@ -83,7 +94,8 @@ function avatarEdit(linkAvatar) {
         })
     })
         .then(res => handleResponse(res))
-}
+        .catch((err) => console.log(err))
 
+}
 
 export { getCards, getUser, editUser, addCard, deleteCard, likeCard, unlikeCard, avatarEdit }

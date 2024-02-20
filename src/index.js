@@ -9,7 +9,7 @@ const editButton = document.querySelector(".profile__edit-button");
 const addButton = document.querySelector(".profile__add-button");
 const popupEdit = document.querySelector(".popup_type_edit");
 const popupNewCard = document.querySelector(".popup_type_new-card");
-const popupsClose = document.querySelectorAll(".popup__close");
+const popupCloseButtons = document.querySelectorAll(".popup__close");
 const popupImage = document.querySelector(".popup_type_image");
 const popupName = document.querySelector('.popup__input_type_name');
 const popupDescription = document.querySelector('.popup__input_type_description');
@@ -45,26 +45,16 @@ addButton.addEventListener("click", () => {
     clearValidation(formCreateCard, validationConfig);
 });
 
-popupsClose.forEach(popup =>
-    popup.addEventListener("click", () => {
-        closePopup(popupEdit);
-        closePopup(popupNewCard);
-        closePopup(popupImage);
-        closePopup(popupAvatar);
-    })
-)
+popupCloseButtons.forEach(popupCloseButton => {
+    const popup = popupCloseButton.closest('.popup');
+    popupCloseButton.addEventListener("click", () => { closePopup(popup) });
+})
 
 document.addEventListener("click", (event) => {
-    if (event.target == popupEdit ||
-        event.target == popupNewCard ||
-        event.target == popupImage ||
-        event.target == popupAvatar) {
-        closePopup(popupEdit)
-        closePopup(popupNewCard)
-        closePopup(popupImage)
-        closePopup(popupAvatar);
+    if (event.target.classList.contains('popup')) {
+        closePopup(event.target)
     }
-});
+})
 
 function addCardModal(event) {
     const card = event.target.closest('.card__image');
@@ -81,13 +71,15 @@ function createCard(evt) {
     sumbitButton.innerText = 'Сохранение...';
     addCard(popupCardName.value, popupUrl.value)
         .then(res => {
-            placesList.prepend(createElement(popupCardName.value, popupUrl.value, 0, true, false, res.owner, res._id, deleteCard, deleteCardApi, fnLikeButton, likeCard, unlikeCard, addCardModal))
+            placesList.prepend(createElement(res, res.owner, false, deleteCardCallback, likeCardCallback, addCardModal))
             closePopup(popupNewCard);
             evt.target.reset();
-            sumbitButton.innerText = 'Сохранить';
         })
         .catch((err) => {
             console.log(err);
+        })
+        .finally(() => {
+            sumbitButton.innerText = 'Сохранить';
         });
 }
 
@@ -96,41 +88,44 @@ function createInfo() {
     popupDescription.value = profileDescription.innerText;
 }
 
-function handleFormSubmit(evt) {
+function profileForm(evt) {
     const nameValue = popupName.value;
     const jobValue = popupDescription.value;
     const sumbitButton = formElement.querySelector(validationConfig.submitButtonSelector);
     sumbitButton.innerText = 'Сохранение...';
 
-    editUser(nameValue, jobValue).then(() => {
-        profileTitle.textContent = nameValue;
-        profileDescription.textContent = jobValue;
+    editUser(nameValue, jobValue).then((res) => {
+        profileTitle.textContent = res.name;
+        profileDescription.textContent = res.about;;
         closePopup(popupEdit);
-        sumbitButton.innerText = 'Сохранить';
     })
         .catch((err) => {
             console.log(err);
+        })
+        .finally(() => {
+            sumbitButton.innerText = 'Сохранить';
         });
 }
 
 function editAvatar() {
     const sumbitButton = formAvatar.querySelector(validationConfig.submitButtonSelector);
     const avatarInput = formAvatar.querySelector(validationConfig.inputSelector);
-
     const link = avatarInput.value;
     sumbitButton.innerText = 'Сохранение...';
     avatarEdit(link)
         .then((res) => {
-            profileImage.style.backgroundImage = 'url(' + link + ')';
+            profileImage.style.backgroundImage = 'url(' + res.avatar + ')';
             closePopup(popupAvatar);
-            sumbitButton.innerText = 'Сохранить';
         })
         .catch((err) => {
             console.log(err);
+        })
+        .finally(() => {
+            sumbitButton.innerText = 'Сохранить';
         });
 }
 
-formElement.addEventListener('submit', handleFormSubmit);
+formElement.addEventListener('submit', profileForm);
 
 formCreateCard.addEventListener('submit', createCard);
 
@@ -143,10 +138,8 @@ Promise.all([getCards(), getUser()])
         console.log(initialCards)
         console.log(user)
         initialCards.forEach(cardInfo => {
-            const author = cardInfo.owner.name;
-            const isAuthor = author === user.name;
             const isLiked = cardInfo.likes.some(u => u._id === user._id)
-            placesList.append(createElement(cardInfo.name, cardInfo.link, cardInfo.likes.length, isAuthor, isLiked, user, cardInfo._id, deleteCard, deleteCardApi, fnLikeButton, likeCard, unlikeCard, addCardModal));
+            placesList.append(createElement(cardInfo, user._id, isLiked, deleteCardCallback, likeCardCallback, addCardModal));
         })
         profileTitle.textContent = user.name;
         profileDescription.textContent = user.about;
@@ -165,7 +158,30 @@ profileImage.addEventListener("click", () => {
     const avatarInput = formAvatar.querySelector(validationConfig.inputSelector);
 
     avatarInput.value = '';
-    sumbitButton.disabled = true;
     sumbitButton.classList.add(validationConfig.inactiveButtonClass);
 });
 
+function deleteCardCallback(event, cardId) {
+    deleteCardApi(cardId).then(() => {
+        deleteCard(event);
+    })
+        .catch(err => console.log(err));
+}
+
+function likeCardCallback(cardId, cardToLike, likeCounter, isLikedMeNow, myId) {
+    function toggleLike(method) {
+        method(cardId)
+            .then((res) => {
+                const isLikedMe = res.likes.some(u => u._id === myId)
+                fnLikeButton(cardToLike, likeCounter, isLikedMe, res.likes.length)
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+    if (isLikedMeNow) {
+        toggleLike(unlikeCard);
+    } else {
+        toggleLike(likeCard);
+    }
+}

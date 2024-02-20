@@ -13,7 +13,8 @@ const isValid = (formElement, inputElement, validationConfig) => {
 
 const showInputError = (formElement, inputElement, errorMessage, validationConfig) => {
     const spanElement = formElement.querySelector(`.${inputElement.name}-input-error`);
-    inputElement.style.borderBottom = '1px solid red';
+
+    inputElement.classList.add("input-error-border-red")
 
     spanElement.textContent = errorMessage;
     spanElement.classList.add(validationConfig.errorClass);
@@ -21,8 +22,10 @@ const showInputError = (formElement, inputElement, errorMessage, validationConfi
 
 const hideInputError = (formElement, inputElement, validationConfig) => {
     const spanElement = formElement.querySelector(`.${inputElement.name}-input-error`);
-    inputElement.style.borderBottom = '1px solid red';
-    inputElement.style.borderBottom = '1px solid rgba(0, 0, 0, 0.2)';
+
+    inputElement.classList.remove("input-error-border-red")
+
+    spanElement.textContent = '';
     spanElement.classList.remove(validationConfig.errorClass);
 };
 
@@ -57,8 +60,7 @@ function clearValidation(profileForm, validationConfig) {
         hideInputError(profileForm, inputElement, validationConfig)
     })
     const buttonElement = profileForm.querySelector(validationConfig.submitButtonSelector);
-    buttonElement.disabled = false;
-    buttonElement.classList.remove(validationConfig.inactiveButtonClass);
+    disableSubmitButton(buttonElement, validationConfig)
 }
 
 const toggleButtonState = (inputList, buttonElement, validationConfig) => {
@@ -66,9 +68,13 @@ const toggleButtonState = (inputList, buttonElement, validationConfig) => {
         buttonElement.classList.add(validationConfig.inactiveButtonClass);
         buttonElement.disabled = true;
     } else {
-        buttonElement.disabled = false;
-        buttonElement.classList.remove(validationConfig.inactiveButtonClass);
+        disableSubmitButton(buttonElement, validationConfig)
     }
 };
+
+const disableSubmitButton = (buttonElement, validationConfig) => {
+    buttonElement.disabled = false;
+    buttonElement.classList.remove(validationConfig.inactiveButtonClass);
+}
 
 export { enableValidation, clearValidation };
